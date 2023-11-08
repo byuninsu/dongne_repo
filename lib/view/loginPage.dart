@@ -1,4 +1,6 @@
+import 'package:dongne/view/signupPage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +15,26 @@ class _LoginPageState extends State<LoginPage> {
   var formKey = GlobalKey<FormState>();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+  bool hasContent = false;
+  bool hasContent2 = false;
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    emailController.addListener(() {
+      setState(() {
+        hasContent = emailController.text.isNotEmpty;
+      });
+    });
+
+    passwordController.addListener(() {
+      setState(() {
+        hasContent2 = passwordController.text.isNotEmpty;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +42,19 @@ class _LoginPageState extends State<LoginPage> {
     double phoneHeightSize = MediaQuery.of(context).size.height - 5;
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          title: Center(
+            child: Text(
+              "로그인",
+              style: TextStyle(color: Colors.black87),
+            ),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black87),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
@@ -28,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -47,17 +82,17 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 Text(
                   "우리 Dongne",
-                  style: GoogleFonts.bebasNeue(fontSize: 30.0),
+                  style: GoogleFonts.bebasNeue(fontSize: 25.0),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 5),
                 Text("모일수록 이득보는 우리동네",
                     style: TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold)),
                 SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Form(
                     key:formKey,
@@ -124,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                             padding:
                             EdgeInsets.only(left: phoneWidthSize / 19.35),
                             child: TextFormField(
-                              controller: emailController,
+                              controller: passwordController,
                               validator: (val) =>
                               val == "" ? "비밀번호를 입력해주세요" : null,
                               decoration: InputDecoration(
@@ -150,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Container(
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: hasContent && hasContent2 ? Colors.red : Colors.grey,
                             borderRadius: BorderRadius.circular(12)),
                         child: Center(
                           child: Text(
@@ -275,21 +310,20 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.all(Radius.circular(4.0))),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(height: 25,),
+                SizedBox(height: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       child:
                         TextButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Get.to(SignupPage());
+                          },
                           child: Text("회원가입", style: TextStyle(color: Colors.black87,)),
                         )
                     ),
-                    SizedBox(width: 50,),
+                    SizedBox(width: 80,),
                     Container(
                       child:
                       TextButton(
