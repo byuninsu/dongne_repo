@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dongne/controller/room_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../model/room.dart';
 
@@ -26,7 +27,6 @@ class _RoomTileState extends State<RoomTile> {
   }
 
   Future<void> fetchData() async {
-
     if (widget.room != null) {
       if (widget.room!.first_option_image != null) {
         firstOptionImage = Uint8List(widget.room!.first_option_image.length);
@@ -56,9 +56,19 @@ class _RoomTileState extends State<RoomTile> {
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
       child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: Colors.black87)),
+        decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          shadows: [BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 6,
+            offset: Offset(0,0),
+            spreadRadius: 1
+          )]
+        ),
+
         child: Column(
           children: [
             Row(
@@ -74,8 +84,7 @@ class _RoomTileState extends State<RoomTile> {
                                 firstOptionImage!,
                                 fit: BoxFit.cover,
                               )
-                            : Image.asset("images/chiken.png")
-                    ),
+                            : Image.asset("images/chiken.png")),
                   ),
                 ),
                 Column(
@@ -84,14 +93,20 @@ class _RoomTileState extends State<RoomTile> {
                       width: 120,
                       child: Text(
                         "${widget.room.room_name}",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.notoSans(
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
                       ),
                     ),
                     Container(
                       width: 120,
                       child: Text(
                         "${widget.room.second_option}",
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        style: GoogleFonts.notoSans(
+                          textStyle: TextStyle(color: Colors.grey, fontSize: 12)
+                        )
                       ),
                     ),
                   ],

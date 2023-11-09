@@ -2,6 +2,7 @@ import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/view/roomTile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -34,7 +35,9 @@ class _MainPageState extends State<MainPage> {
             title: Center(
               child: Text(
                 "채팅창 리스트",
-                style: TextStyle(color: Colors.black87),
+                style: GoogleFonts.notoSans(
+                  textStyle: TextStyle(color: Colors.black)
+                ),
               ),
             ),
             backgroundColor: Colors.white,
@@ -53,7 +56,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 SizedBox(width: 20,),
                 Container(
-                  child: Text("인천광역시 미추홀구 주부토로 201"),
+                  child: Text("인천광역시 미추홀구 주부토로 201", style: GoogleFonts.notoSans(),),
                 )
               ],
             ),
