@@ -1,3 +1,5 @@
+import 'package:dongne/view/mainPage.dart';
+import 'package:dongne/view/menuPage.dart';
 import 'package:dongne/view/signupPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -175,9 +177,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    if(formKey.currentState!.validate()){
-
-                    }
+                    // if(formKey.currentState!.validate()){
+                    //
+                    // }
+                    Get.to(MenuPage());
                   },
                   child: Container(
                     child: Padding(

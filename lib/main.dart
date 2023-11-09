@@ -1,9 +1,11 @@
+import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/view/loginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
+  Get.put(RoomController());
 }
 
 class MyApp extends StatelessWidget {
