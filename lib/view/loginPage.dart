@@ -1,3 +1,4 @@
+import 'package:dongne/controller/user_controller.dart';
 import 'package:dongne/view/mainPage.dart';
 import 'package:dongne/view/menuPage.dart';
 import 'package:dongne/view/signupPage.dart';
@@ -268,7 +269,9 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                      onPressed: () {},
+                      onPressed: () {
+                        UserController.instance.examplePost();
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
