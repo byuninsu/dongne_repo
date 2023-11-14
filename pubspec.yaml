@@ -46,6 +46,8 @@ dependencies:
   like_button: ^2.0.5
   loading_indicator: ^3.1.1
   firebase_core: ^2.22.0
+  firebase_auth: ^4.13.0
+  google_sign_in: ^6.1.6
 
 dev_dependencies:
   flutter_test:
