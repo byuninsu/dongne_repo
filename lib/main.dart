@@ -1,7 +1,9 @@
 import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/controller/user_controller.dart';
 import 'package:dongne/view/loginPage.dart';
+import 'package:dongne/view/mainPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -11,13 +13,28 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  runApp(const MyApp());
+  runApp( MyApp());
   Get.put(RoomController());
   Get.put(UserController());
+
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+
+  String? userToken;
+
+  void checkUserLogin(){
+    UserController.instance.getUserToken().then((value) {
+      if(value != null){
+        userToken = value;
+      }
+    });
+
+    if(userToken != null){
+      Get.to(MainPage());
+    }
+  }
 
   // This widget is the root of your application.
   @override

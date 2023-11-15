@@ -1,3 +1,4 @@
+import 'package:dongne/model/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,15 @@ class _SignupPageState extends State<SignupPage> {
 
   bool hasContent = false;
   bool hasContent2 = false;
+
+  saveUser(){
+
+    String userEmail = emailController.text.trim();
+    String userNickname = userNameController.text.trim();
+
+
+    // UserInformation userinfo = UserInformation(email, nickname, phoneNo, profileImage, newsNotification, pushToken, role, idToken, password, kakaoId, naverId, appleId, refreshToken)
+  }
 
 
   @override

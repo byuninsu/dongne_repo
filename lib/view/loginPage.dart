@@ -1,12 +1,12 @@
 import 'package:dongne/controller/user_controller.dart';
+import 'package:dongne/model/userInfo.dart';
 import 'package:dongne/view/mainPage.dart';
 import 'package:dongne/view/menuPage.dart';
 import 'package:dongne/view/signupPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   bool hasContent2 = false;
 
 
+
   @override
   void initState() {
     super.initState();
@@ -39,24 +40,11 @@ class _LoginPageState extends State<LoginPage> {
         hasContent2 = passwordController.text.isNotEmpty;
       });
     });
+
+
+
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: signInWithGoogle,
+                      onPressed: UserController.instance.signInWithGoogle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -270,7 +258,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
                       onPressed: () {
-                        UserController.instance.examplePost();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -336,7 +323,7 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.all(Radius.circular(4.0))),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(height: 5,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

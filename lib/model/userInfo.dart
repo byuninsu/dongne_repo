@@ -1,4 +1,4 @@
-class User {
+class UserInformation {
   String email;
   String nickname;
   String phoneNo;
@@ -13,7 +13,7 @@ class User {
   String? appleId;
   String? refreshToken;
 
-  User(
+  UserInformation(
     this.email,
     this.nickname,
     this.phoneNo,
@@ -29,10 +29,10 @@ class User {
     this.refreshToken,
   );
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory UserInformation.fromJson(Map<String, dynamic> json) {
     List<String> tempList = [json['join_user_list']];
 
-    return User(
+    return UserInformation(
         json['email'].toString(),
         json['nickname'].toString(),
         json['phoneNo'].toString(),
