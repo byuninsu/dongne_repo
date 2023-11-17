@@ -3,6 +3,7 @@ import 'package:dongne/model/userInfo.dart';
 import 'package:dongne/view/mainPage.dart';
 import 'package:dongne/view/menuPage.dart';
 import 'package:dongne/view/signupPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +23,9 @@ class _LoginPageState extends State<LoginPage> {
   var passwordController = TextEditingController();
   bool hasContent = false;
   bool hasContent2 = false;
+  String? userToken;
+
+
 
 
 
@@ -41,8 +45,21 @@ class _LoginPageState extends State<LoginPage> {
       });
     });
 
+    checkUserLogin();
 
+  }
 
+  void checkUserLogin() async{
+    await UserController.instance.getUserToken().then((value) {
+      if(value != null){
+        userToken = value;
+      }
+    });
+
+    if(userToken != null){
+      print(userToken);
+      Get.to(MainPage());
+    }
   }
 
 
@@ -340,7 +357,9 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       child:
                       TextButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          UserController.instance.getUserToken();
+                        },
                         child: Text("아이디/비밀번호 찾기", style: TextStyle(color: Colors.black87)),
                       )
                     ),
