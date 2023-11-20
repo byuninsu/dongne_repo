@@ -10,7 +10,8 @@ import '../model/userInfo.dart';
 class UserController extends GetxController {
   static UserController instance = Get.find();
 
-  static final storage = new FlutterSecureStorage();
+  static const storage =  FlutterSecureStorage();
+  final String loginKey = 'accessToken';
 
   String? userAccessToken;
 
@@ -58,10 +59,14 @@ class UserController extends GetxController {
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) async {
-      print("Google login success!! : ${value.user!.uid} ");
+
 
       try{
-        await storage.write(key: 'accessToken', value: value.user!.refreshToken);
+        await storage.write(
+            key:loginKey,
+            value: value.user!.uid
+        );
+        print("Google login success!! : ${value.user!.uid} ");
       }catch (e){
         print("Error writing to storage: $e");
       }
@@ -71,28 +76,14 @@ class UserController extends GetxController {
     });
   }
 
-  logout() async {
-    await storage.delete(key: 'accessToken');
-  }
 
-  // checkUserState() async {
-  //   userAccessToken = await storage.read(key: 'accessToken');
-  //   if (userAccessToken == null) {
-  //     print('로그인 페이지로 이동');
-  //     Navigator.pushNamed(context, '/'); // 로그인 페이지로 이동
-  //   } else {
-  //     print('로그인 중');
-  //   }
-  // }
 
   Future<String?> getUserToken() async {
     // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
     // 데이터가 없을때는 null을 반환
 
-
-
     try{
-      userAccessToken = await storage.read(key:'accessToken');
+      userAccessToken = await storage. read(key:loginKey);
     }catch (e){
       print("Error reading to storage: $e");
     }
@@ -108,6 +99,20 @@ class UserController extends GetxController {
     }
     return null;
   }
+
+  logout() async {
+    await storage.delete(key: 'accessToken');
+  }
+
+// checkUserState() async {
+//   userAccessToken = await storage.read(key: 'accessToken');
+//   if (userAccessToken == null) {
+//     print('로그인 페이지로 이동');
+//     Navigator.pushNamed(context, '/'); // 로그인 페이지로 이동
+//   } else {
+//     print('로그인 중');
+//   }
+// }
 
 
 }
