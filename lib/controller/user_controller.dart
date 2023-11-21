@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import '../api/api.dart';
 import '../model/userInfo.dart';
 
@@ -78,7 +79,7 @@ class UserController extends GetxController {
 
 
 
-  Future<String?> getUserToken() async {
+  Future<String?> getGoogleUserToken() async {
     // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
     // 데이터가 없을때는 null을 반환
 
@@ -104,15 +105,45 @@ class UserController extends GetxController {
     await storage.delete(key: 'accessToken');
   }
 
-// checkUserState() async {
-//   userAccessToken = await storage.read(key: 'accessToken');
-//   if (userAccessToken == null) {
-//     print('로그인 페이지로 이동');
-//     Navigator.pushNamed(context, '/'); // 로그인 페이지로 이동
-//   } else {
-//     print('로그인 중');
-//   }
-// }
+  Future<bool> kakaoLogin() async{
+    try{
+      bool isInstalled = await isKakaoTalkInstalled();
+      if(isInstalled){
+        try{
+          OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
+          print("kakao login success User : ${token}");
+          return true;
+        }catch (e){
+          return false;
+        }
+      }else{
+        try{
+          OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+          print("kakao Account login success User : ${token}");
+          return true;
+        }catch (e) {
+          return false;
+        }
+      }
+    }catch(e){
+      print("kakao login fair errorCode : ${e}");
+      return false;
+    }
+  }
+
+
+
+  Future<bool> kakaoLogout() async {
+    try{
+      await UserApi.instance.unlink();
+      return true;
+    }catch (e){
+      print("kakao logout fair errorCode : ${e}");
+      return false;
+    }
+  }
+
+
 
 
 }

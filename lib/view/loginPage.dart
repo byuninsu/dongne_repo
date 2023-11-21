@@ -26,9 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   String? userToken;
 
 
-
-
-
   @override
   void initState() {
     super.initState();
@@ -45,12 +42,12 @@ class _LoginPageState extends State<LoginPage> {
       });
     });
 
-    checkUserLogin();
+    //checkUserLogin();
 
   }
 
   void checkUserLogin() async{
-    await UserController.instance.getUserToken().then((value) {
+    await UserController.instance.getGoogleUserToken().then((value) {
       if(value != null){
         userToken = value;
       }
@@ -275,6 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
                       onPressed: () {
+                        UserController.instance.kakaoLogin();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -358,7 +356,7 @@ class _LoginPageState extends State<LoginPage> {
                       child:
                       TextButton(
                         onPressed: (){
-                          UserController.instance.getUserToken();
+                          UserController.instance.getGoogleUserToken();
                         },
                         child: Text("아이디/비밀번호 찾기", style: TextStyle(color: Colors.black87)),
                       )
