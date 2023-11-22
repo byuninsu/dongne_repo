@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   var passwordController = TextEditingController();
   bool hasContent = false;
   bool hasContent2 = false;
+  bool isKakaoLogined = false;
   String? userToken;
 
 
@@ -271,8 +272,10 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                      onPressed: () {
-                        UserController.instance.kakaoLogin();
+                      onPressed: () async {
+                        isKakaoLogined = await UserController.instance.kakaoLogin();
+
+                        print('kakaoLogin : ${isKakaoLogined}');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -356,7 +359,7 @@ class _LoginPageState extends State<LoginPage> {
                       child:
                       TextButton(
                         onPressed: (){
-                          UserController.instance.getGoogleUserToken();
+                          UserController.instance.kakaoLogout();
                         },
                         child: Text("아이디/비밀번호 찾기", style: TextStyle(color: Colors.black87)),
                       )

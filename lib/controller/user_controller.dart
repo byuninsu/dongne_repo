@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,8 +13,9 @@ class UserController extends GetxController {
 
   static const storage =  FlutterSecureStorage();
   final String loginKey = 'accessToken';
-
   String? userAccessToken;
+  User? kakaoUser;
+  bool isKakaoUserLogin = false;
 
   Future<void> signupUser(UserInformation userInformation) async {
     print("examplePost++ ");
@@ -114,14 +115,17 @@ class UserController extends GetxController {
           print("kakao login success User : ${token}");
           return true;
         }catch (e){
+          print("kakao login fair errorCode : ${e}");
           return false;
         }
       }else{
         try{
+          print("kakao Account login ++ ");
           OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
           print("kakao Account login success User : ${token}");
           return true;
         }catch (e) {
+          print("kakaoAccount login fair errorCode : ${e}");
           return false;
         }
       }
