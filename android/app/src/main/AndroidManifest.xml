@@ -7,6 +7,22 @@
         android:label="dongne"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
+        <activity
+            android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
+            android:exported="true">
+            <intent-filter android:label="flutter_web_auth">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- "kakao${YOUR_NATIVE_APP_KEY}://oauth" 형식의 앱 실행 스킴 설정 -->
+                <!-- 카카오 로그인 Redirect URI -->
+                <data android:scheme="kakao9cccb013e001c7d23a8bad7125e4c8e4" android:host="oauth"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,16 +39,15 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
-                <data android:host="oauth"
-                    android:scheme="kakao9cccb013e001c7d23a8bad7125e4c8e4" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
@@ -40,5 +55,18 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- 네이버 로그인 추가 -->
+        <meta-data
+            android:name="com.naver.sdk.clientId"
+            android:value="@string/client_id" />
+        <meta-data
+            android:name="com.naver.sdk.clientSecret"
+            android:value="@string/client_secret" />
+        <meta-data
+            android:name="com.naver.sdk.clientName"
+            android:value="@string/client_name" />
+
+
     </application>
 </manifest>

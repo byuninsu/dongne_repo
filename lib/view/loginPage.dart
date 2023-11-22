@@ -313,7 +313,9 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700]),
-                      onPressed: () {},
+                      onPressed: () {
+                        UserController.instance.naeverLoingin();
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [

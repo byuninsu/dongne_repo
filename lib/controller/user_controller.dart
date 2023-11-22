@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../api/api.dart';
 import '../model/userInfo.dart';
 
@@ -14,7 +15,7 @@ class UserController extends GetxController {
   static const storage =  FlutterSecureStorage();
   final String loginKey = 'accessToken';
   String? userAccessToken;
-  User? kakaoUser;
+  kakao.User? kakaoUser;
   bool isKakaoUserLogin = false;
 
   Future<void> signupUser(UserInformation userInformation) async {
@@ -108,10 +109,11 @@ class UserController extends GetxController {
 
   Future<bool> kakaoLogin() async{
     try{
-      bool isInstalled = await isKakaoTalkInstalled();
+      bool isInstalled = await kakao.isKakaoTalkInstalled();
       if(isInstalled){
         try{
-          OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
+          kakao.OAuthToken token = await kakao.UserApi.instance.loginWithKakaoAccount();
+          //OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
           print("kakao login success User : ${token}");
           return true;
         }catch (e){
@@ -121,7 +123,7 @@ class UserController extends GetxController {
       }else{
         try{
           print("kakao Account login ++ ");
-          OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+          kakao.OAuthToken token = await kakao.UserApi.instance.loginWithKakaoAccount();
           print("kakao Account login success User : ${token}");
           return true;
         }catch (e) {
@@ -135,16 +137,29 @@ class UserController extends GetxController {
     }
   }
 
-
-
   Future<bool> kakaoLogout() async {
     try{
-      await UserApi.instance.unlink();
+      await kakao.UserApi.instance.unlink();
       return true;
     }catch (e){
       print("kakao logout fair errorCode : ${e}");
       return false;
     }
+  }
+
+  void naeverLoingin() async {
+    final NaverLoginResult result = await FlutterNaverLogin.logIn();
+
+    if (result.status == NaverLoginStatus.loggedIn) {
+      print('accessToken = ${result.accessToken}');
+      print('id = ${result.account.id}');
+      print('email = ${result.account.email}');
+      print('name = ${result.account.name}');
+    }
+  }
+
+  void naverLogout() async {
+    await FlutterNaverLogin.logOut();
   }
 
 
