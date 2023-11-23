@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:dongne/model/address.dart';
 import 'package:dongne/view/mainPage.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
@@ -18,6 +19,7 @@ class UserController extends GetxController {
   static const storage =  FlutterSecureStorage();
   final String loginKey = 'accessToken';
   String? userAccessToken;
+  String? userAreaId;
   late Rx<User?> currentUser = Rx<User?>(null);
   kakao.User? kakaoUser;
   bool isKakaoUserLogin = false;
@@ -250,7 +252,7 @@ class UserController extends GetxController {
       await http.put(
           Uri.parse(API.setUserAddress),
           headers: <String,String>{
-            'Authorization': userAccessToken.toString()
+            'Authorization': 'Bearer ${userAccessToken.toString()}'
           },
           body: userAddress.toJson()
       );
@@ -263,14 +265,53 @@ class UserController extends GetxController {
         print("유저 주소 등록 완료");
         print("res : ${resultMessage}");
 
-        storage.write(key: 'userAreaId', value: resultMessage['areaId']);
+        storage.write(key: 'userAreaId', value: resultMessage['id'].toString());
 
-        print('user accessToken : ${storage.read(key: 'userAreaId') }');
+        userAreaId = storage.read(key: 'userAreaId').toString();
+
+        print('user userAreaId : ${ userAreaId.toString()}');
+
+        setUserArea( userAreaId.toString());
 
         return true;
 
       } else {
         print("유저 주소 등록 실패");
+        print("res : ${res.body}");
+        return false;
+      }
+    } catch (e) {
+      print("try exception !!${e.toString()} ");
+    }
+
+    return false;
+  }
+
+  Future<bool> setUserArea (String userAreaId) async {
+    print("setUserArea : ${userAreaId.toString()}");
+
+    try {
+      var res =
+      await http.put(
+          Uri.parse(API.setUserAddress),
+          headers: <String,String>{
+            'Authorization': 'Bearer ${userAccessToken.toString()}'
+          },
+          body: int.parse(userAreaId)
+      );
+
+      int firstDigit = res.statusCode ~/ 100;
+
+      if (firstDigit == 2) {
+        Map<String,dynamic> resultMessage = json.decode(res.body);
+
+        print("유저 지역 등록 완료");
+        print("res : ${resultMessage}");
+
+        return true;
+
+      } else {
+        print("유저 지역 등록 실패");
         print("res : ${res.body}");
         return false;
       }
