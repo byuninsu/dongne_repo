@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:dongne/model/address.dart';
+import 'package:dongne/view/mainPage.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -15,28 +18,41 @@ class UserController extends GetxController {
   static const storage =  FlutterSecureStorage();
   final String loginKey = 'accessToken';
   String? userAccessToken;
+  late Rx<User?> currentUser = Rx<User?>(null);
   kakao.User? kakaoUser;
   bool isKakaoUserLogin = false;
 
+
+  @override
+  void onInit() {
+    ever(currentUser, (User? user) {
+      if(user != null){
+        Get.to(MainPage());
+      }
+    });
+  }
+
   Future<void> signupUser(UserInformation userInformation) async {
-    print("examplePost++ ");
-
-    // UserInformation sampleUser = UserInformation(
-    //     'insu8897@naver.com', 'dkdkdkdawdj', '010-4404-4239',
-    //     'http', true, 'token', 'role', null, '1234', null, null, null, null
-    // );
-
-    print(userInformation.toJson());
+    print('signupUser data : ${userInformation.toJson()}');
 
     try {
       var res =
           await http.post(Uri.parse(API.userSignUp), body: userInformation.toJson());
-      print('postAddress : ${API.userSignUp}');
 
-      if (res.statusCode == 200) {
-        var resUser = jsonDecode(res.body);
+      int firstDigit = res.statusCode ~/ 100;
+
+      if (firstDigit == 2) {
+        Map<String,dynamic> resultMessage = json.decode(res.body);
+
         print("가입성공");
-        print(resUser);
+        print("res : ${resultMessage}");
+
+        storage.write(key: 'accessToken', value: resultMessage['accessToken']);
+        storage.write(key: 'refreshToken', value: resultMessage['refreshToken']);
+
+        print('user accessToken : ${storage.read(key: 'accessToken') }');
+        print('user refreshToken : ${storage.read(key: 'refreshToken') }');
+
       } else {
         print("sign not success res.statusCode : ${res.statusCode}");
         print("res : ${res.body}");
@@ -46,7 +62,39 @@ class UserController extends GetxController {
     }
   }
 
-  void signInWithGoogle() async {
+  Future<void> loginUser(UserInformation userInformation) async {
+    print('signupUser data : ${userInformation.toJson()}');
+
+    try {
+      var res =
+      await http.post(Uri.parse(API.userLogin), body: userInformation.toJson());
+
+      int firstDigit = res.statusCode ~/ 100;
+
+      if (firstDigit == 2) {
+        Map<String,dynamic> resultMessage = json.decode(res.body);
+
+        print("로그인성공");
+        print("res : ${resultMessage}");
+
+        storage.write(key: 'accessToken', value: resultMessage['accessToken']);
+        storage.write(key: 'refreshToken', value: resultMessage['refreshToken']);
+
+        print('storage write user accessToken : ${await storage.read(key: 'accessToken') }');
+        print('storage write user refreshToken : ${await storage.read(key: 'refreshToken') }');
+
+        userAccessToken = await storage.read(key: 'accessToken');
+
+      } else {
+        print("sign not success res.statusCode : ${res.statusCode}");
+        print("res : ${res.body}");
+      }
+    } catch (e) {
+      print("try exception !!${e.toString()} ");
+    }
+  }
+
+  Future<bool> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -63,22 +111,55 @@ class UserController extends GetxController {
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) async {
 
-
       try{
         await storage.write(
             key:loginKey,
             value: value.user!.uid
         );
-        print("Google login success!! : ${value.user!.uid} ");
+        //print("Google login success!! : ${value.user} ");
+
+        currentUser.value = value.user;
+
+        UserInformation googleUserData =
+        UserInformation(
+            currentUser.value!.email.toString(),
+            currentUser.value!.displayName.toString(),
+            '010-3273-3273',
+            currentUser.value!.photoURL.toString(),
+            true,
+            null,
+            'USER',
+            null,
+            '1234ffff',
+            currentUser.value!.uid,
+            null,
+            null,
+            null
+        );
+
+        loginUser(googleUserData);
+
+        // if(storage.read(key: 'accessToken') == null ){
+        //   signupUser(googleUserData);
+        // }else{
+        //   loginUser(googleUserData);
+        // }
+
+        return true;
+
       }catch (e){
         print("Error writing to storage: $e");
+        return false;
       }
 
     }).onError((error, stackTrace)  {
       print('signInWithGoogle error : ${error}');
+      return false;
     });
-  }
 
+    return false;
+
+  }
 
 
   Future<String?> getGoogleUserToken() async {
@@ -124,7 +205,6 @@ class UserController extends GetxController {
         try{
           print("kakao Account login ++ ");
           kakao.OAuthToken token = await kakao.UserApi.instance.loginWithKakaoAccount();
-          print("kakao Account login success User : ${token}");
           return true;
         }catch (e) {
           print("kakaoAccount login fair errorCode : ${e}");
@@ -161,6 +241,47 @@ class UserController extends GetxController {
   void naverLogout() async {
     await FlutterNaverLogin.logOut();
   }
+
+  Future<bool> setUserAddress(Address userAddress) async {
+    print("userAccessToken.toString() : ${userAccessToken.toString()}");
+
+    try {
+      var res =
+      await http.put(
+          Uri.parse(API.setUserAddress),
+          headers: <String,String>{
+            'Authorization': userAccessToken.toString()
+          },
+          body: userAddress.toJson()
+      );
+
+      int firstDigit = res.statusCode ~/ 100;
+
+      if (firstDigit == 2) {
+        Map<String,dynamic> resultMessage = json.decode(res.body);
+
+        print("유저 주소 등록 완료");
+        print("res : ${resultMessage}");
+
+        storage.write(key: 'userAreaId', value: resultMessage['areaId']);
+
+        print('user accessToken : ${storage.read(key: 'userAreaId') }');
+
+        return true;
+
+      } else {
+        print("유저 주소 등록 실패");
+        print("res : ${res.body}");
+        return false;
+      }
+    } catch (e) {
+      print("try exception !!${e.toString()} ");
+    }
+
+    return false;
+  }
+
+
 
 
 

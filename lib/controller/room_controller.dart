@@ -14,10 +14,7 @@ class RoomController extends GetxController {
 
   Room? roomInfo;
 
-  var firstOptionVote = 0.obs;
-  var secondOptionVote = 0.obs;
-  var firstOptionRate = 0.0.obs;
-  var secondOptionRate = 0.0.obs;
+
 
   Future<Room?> getRoomInfo() async {
     print("getRoomInfo() ++");
@@ -26,119 +23,100 @@ class RoomController extends GetxController {
 
   void clearRoomInfo(){
     roomInfo = null;
-    firstOptionVote = 0.obs;
-    secondOptionVote = 0.obs;
-    firstOptionRate = 0.0.obs;
-    secondOptionRate = 0.0.obs;
   }
 
 
+  // Future<void> voteOption(String roomNumber, String optionNumber) async {
+  //   print("RoomController voteOption ++ ");
+  //
+  //   try{
+  //     var res = await http.post(Uri.parse(API.voteOption), body: {
+  //       "room_number" :  roomNumber,
+  //       "option_number" : optionNumber
+  //     });
+  //
+  //     if(res.statusCode == 200){
+  //       var resVote = jsonDecode(res.body);
+  //       if(resVote['success'] == true ){
+  //         print("투표 성공");
+  //       }else{
+  //         print("투표 실패 not success");
+  //       }
+  //     }else{
+  //       print("vote not success res.statusCode : ${res.statusCode}");
+  //     }
+  //   }catch (e){
+  //     print("try exception !!${e.toString()} ");
+  //   }
+  //   updateRoomInfo(roomInfo!.room_number.toString());
+  //
+  // }
 
-  Future<void> setOption() async {
-
-    firstOptionVote.value = roomInfo!.first_option_vote;
-    secondOptionVote.value = roomInfo!.second_option_vote;
-
-    firstOptionRate.value = double.parse(
-        (firstOptionVote.value /(secondOptionVote.value + firstOptionVote.value) * 100).toStringAsFixed(1));
-    secondOptionRate.value = double.parse(
-        (secondOptionVote.value /(secondOptionVote.value + firstOptionVote.value) * 100).toStringAsFixed(1));
-
-    print("setFirstOption() ++");
-
-  }
-
-  Future<void> voteOption(String roomNumber, String optionNumber) async {
-    print("RoomController voteOption ++ ");
-
-    try{
-      var res = await http.post(Uri.parse(API.voteOption), body: {
-        "room_number" :  roomNumber,
-        "option_number" : optionNumber
-      });
-
-      if(res.statusCode == 200){
-        var resVote = jsonDecode(res.body);
-        if(resVote['success'] == true ){
-          print("투표 성공");
-        }else{
-          print("투표 실패 not success");
-        }
-      }else{
-        print("vote not success res.statusCode : ${res.statusCode}");
-      }
-    }catch (e){
-      print("try exception !!${e.toString()} ");
-    }
-    updateRoomInfo(roomInfo!.room_number.toString());
-
-  }
-
-  Future<void> updateRoomInfo(String roomNumber) async {
-    print("updateRoomInfo ++  roomNumber : ${roomNumber}");
-
-
-    try {
-      //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
-      var res = await http.post(Uri.parse(API.choiceRoom), body: {
-        "room_number": roomNumber,
-      });
-
-      //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
-      if (res.statusCode == 200) {
-        var resLogin = jsonDecode(res.body);
-        if (resLogin['success'] == true) {
-          print("choiceRoom success");
-
-          roomInfo = Room.fromJson(resLogin['roomData']);
-          setOption();
-
-        } else {
-          print("receiveDbUser not success");
-        }
-      } else {
-        print("res.statusCode not 200, statusCode = ${res.statusCode} ");
-      }
-    } catch (e) {
-      print("try exception !!${e.toString()} ");
-    }
-
-  }
+  // Future<void> updateRoomInfo(String roomNumber) async {
+  //   print("updateRoomInfo ++  roomNumber : ${roomNumber}");
+  //
+  //
+  //   try {
+  //     //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
+  //     var res = await http.post(Uri.parse(API.choiceRoom), body: {
+  //       "room_number": roomNumber,
+  //     });
+  //
+  //     //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
+  //     if (res.statusCode == 200) {
+  //       var resLogin = jsonDecode(res.body);
+  //       if (resLogin['success'] == true) {
+  //         print("choiceRoom success");
+  //
+  //         roomInfo = Room.fromJson(resLogin['roomData']);
+  //         setOption();
+  //
+  //       } else {
+  //         print("receiveDbUser not success");
+  //       }
+  //     } else {
+  //       print("res.statusCode not 200, statusCode = ${res.statusCode} ");
+  //     }
+  //   } catch (e) {
+  //     print("try exception !!${e.toString()} ");
+  //   }
+  //
+  // }
 
 
 
-  Future<int> choiceRoom(String receiveRoomNumber) async {
-    print("choiceRoom++ receiveRoomNumber : ${receiveRoomNumber}");
-    int roomNumber = 1;
-
-    try {
-      //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
-      var res = await http.post(Uri.parse(API.choiceRoom), body: {
-        "room_number": receiveRoomNumber,
-      });
-
-      //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
-      if (res.statusCode == 200) {
-        var resLogin = jsonDecode(res.body);
-        if (resLogin['success'] == true) {
-          print("choiceRoom success");
-
-          roomInfo = Room.fromJson(resLogin['roomData']);
-          roomNumber = roomInfo!.room_number;
-          setOption();
-
-        } else {
-          print("receiveDbUser not success");
-        }
-      } else {
-        print("res.statusCode not 200, statusCode = ${res.statusCode} ");
-      }
-    } catch (e) {
-      print("try exception !!${e.toString()} ");
-    }
-
-    return roomNumber;
-  }
+  // Future<int> choiceRoom(String receiveRoomNumber) async {
+  //   print("choiceRoom++ receiveRoomNumber : ${receiveRoomNumber}");
+  //   int roomNumber = 1;
+  //
+  //   try {
+  //     //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
+  //     var res = await http.post(Uri.parse(API.choiceRoom), body: {
+  //       "room_number": receiveRoomNumber,
+  //     });
+  //
+  //     //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
+  //     if (res.statusCode == 200) {
+  //       var resLogin = jsonDecode(res.body);
+  //       if (resLogin['success'] == true) {
+  //         print("choiceRoom success");
+  //
+  //         roomInfo = Room.fromJson(resLogin['roomData']);
+  //         roomNumber = roomInfo!.room_number;
+  //         setOption();
+  //
+  //       } else {
+  //         print("receiveDbUser not success");
+  //       }
+  //     } else {
+  //       print("res.statusCode not 200, statusCode = ${res.statusCode} ");
+  //     }
+  //   } catch (e) {
+  //     print("try exception !!${e.toString()} ");
+  //   }
+  //
+  //   return roomNumber;
+  // }
 
   void createRoom() {
     print("createRoom() ++");
@@ -173,13 +151,13 @@ class RoomController extends GetxController {
             roomList.add(room);
           }
         } else {
-          print("roomList 수신 실패");
+          // print("roomList 수신 실패");
         }
       } else {
-        print("데이터베이스 통신 실패, statusCode = ${res.statusCode} ");
+        // print("데이터베이스 통신 실패, statusCode = ${res.statusCode} ");
       }
     } catch (e) {
-      print("try exception !!${e.toString()}");
+      // print("try exception !!${e.toString()}");
     }
   }
 }

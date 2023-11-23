@@ -27,25 +27,7 @@ class _RoomTileState extends State<RoomTile> {
   }
 
   Future<void> fetchData() async {
-    if (widget.room != null) {
-      if (widget.room!.first_option_image != null) {
-        firstOptionImage = Uint8List(widget.room!.first_option_image.length);
-        firstOptionImage = widget.room!.first_option_image;
-      }
-      if (widget.room!.second_option_image != null) {
-        secondOptionImage = Uint8List(widget.room!.second_option_image.length);
-        secondOptionImage = widget.room!.second_option_image;
-      }
-    }
 
-    print("firstoption  : ${widget.room.first_option_vote}");
-    print("secondoption  : ${widget.room.second_option_vote}");
-
-    if (widget.room.first_option_vote >= widget.room.second_option_vote) {
-      setState(() {
-        isDeadLine = true;
-      });
-    }
   }
 
   @override
@@ -79,12 +61,7 @@ class _RoomTileState extends State<RoomTile> {
                     child: SizedBox(
                         width: 40,
                         height: 40,
-                        child: firstOptionImage.length > 0
-                            ? Image.memory(
-                                firstOptionImage!,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("images/chiken.png")),
+                        child: Image.asset("images/chiken.png")),
                   ),
                 ),
                 Column(
@@ -92,7 +69,7 @@ class _RoomTileState extends State<RoomTile> {
                     Container(
                       width: 120,
                       child: Text(
-                        "${widget.room.room_name}",
+                        "${widget.room.title}",
                         style: GoogleFonts.notoSans(
                           textStyle: TextStyle(
                             fontWeight: FontWeight.bold
@@ -103,7 +80,7 @@ class _RoomTileState extends State<RoomTile> {
                     Container(
                       width: 120,
                       child: Text(
-                        "${widget.room.second_option}",
+                        "${widget.room.dueDate}",
                         style: GoogleFonts.notoSans(
                           textStyle: TextStyle(color: Colors.grey, fontSize: 12)
                         )
@@ -154,7 +131,7 @@ class _RoomTileState extends State<RoomTile> {
                 Icon(Icons.person),
                 Container(
                   child: Text(
-                      "${widget.room.first_option_vote} / ${widget.room.second_option_vote}"),
+                      "${widget.room.max} / ${widget.room.max}"),
                 )
               ],
             )

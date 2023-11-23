@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -17,15 +16,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   var formKey = GlobalKey<FormState>();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
   bool hasContent = false;
   bool hasContent2 = false;
-  bool isKakaoLogined = false;
+  bool isLogined = false;
   String? userToken;
-
 
   @override
   void initState() {
@@ -44,26 +41,16 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     //checkUserLogin();
-
   }
 
-  void checkUserLogin() async{
-    await UserController.instance.getGoogleUserToken().then((value) {
-      if(value != null){
-        userToken = value;
-      }
-    });
-
-    if(userToken != null){
-      print(userToken);
+  void checkUserLogin() async {
+    if (isLogined == true) {
       Get.to(MainPage());
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     double phoneWidthSize = MediaQuery.of(context).size.width - 5;
     double phoneHeightSize = MediaQuery.of(context).size.height - 5;
 
@@ -88,7 +75,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -115,13 +104,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 5),
                 Text("모일수록 이득보는 우리동네",
-                    style: TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 SizedBox(
                   height: 20,
                 ),
                 Form(
-                    key:formKey,
+                    key: formKey,
                     child: Column(
                       children: [
                         Container(
@@ -147,13 +136,14 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Padding(
                             padding:
-                            EdgeInsets.only(left: phoneWidthSize / 19.35),
+                                EdgeInsets.only(left: phoneWidthSize / 19.35),
                             child: TextFormField(
                               controller: emailController,
                               validator: (val) =>
-                              val == "" ? "이메일을 입력해주세요" : null,
+                                  val == "" ? "이메일을 입력해주세요" : null,
                               decoration: InputDecoration(
-                                  border: InputBorder.none, hintText: 'adcd@naver.com'),
+                                  border: InputBorder.none,
+                                  hintText: 'adcd@naver.com'),
                             ),
                           ),
                         ),
@@ -183,19 +173,19 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Padding(
                             padding:
-                            EdgeInsets.only(left: phoneWidthSize / 19.35),
+                                EdgeInsets.only(left: phoneWidthSize / 19.35),
                             child: TextFormField(
                               controller: passwordController,
                               validator: (val) =>
-                              val == "" ? "비밀번호를 입력해주세요" : null,
+                                  val == "" ? "비밀번호를 입력해주세요" : null,
                               decoration: InputDecoration(
-                                  border: InputBorder.none, hintText: '영문, 숫자 포함 8자 이상'),
+                                  border: InputBorder.none,
+                                  hintText: '영문, 숫자 포함 8자 이상'),
                             ),
                           ),
                         ),
                       ],
-                    )
-                ),
+                    )),
                 SizedBox(
                   height: 10,
                 ),
@@ -212,7 +202,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: Container(
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                            color: hasContent && hasContent2 ? Colors.red : Colors.grey,
+                            color: hasContent && hasContent2
+                                ? Colors.red
+                                : Colors.grey,
                             borderRadius: BorderRadius.circular(12)),
                         child: Center(
                           child: Text(
@@ -227,18 +219,31 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
-                Container(
-                  child: Text("OR", style: TextStyle(fontSize: 15.0),),
+                SizedBox(
+                  height: 10,
                 ),
-                SizedBox(height: 10,),
+                Container(
+                  child: Text(
+                    "OR",
+                    style: TextStyle(fontSize: 15.0),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 25.0),
                   child: ButtonTheme(
                     height: 50.0,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: UserController.instance.signInWithGoogle,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      onPressed: () async {
+                        isLogined =
+                            await UserController.instance.signInWithGoogle();
+
+                        checkUserLogin();
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -249,7 +254,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Text(
                             '구글계정으로 로그인',
-                            style: TextStyle(color: Colors.black87, fontSize: 15.0),
+                            style: TextStyle(
+                                color: Colors.black87, fontSize: 15.0),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -271,11 +277,12 @@ class _LoginPageState extends State<LoginPage> {
                   child: ButtonTheme(
                     height: 50.0,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow),
                       onPressed: () async {
-                        isKakaoLogined = await UserController.instance.kakaoLogin();
+                        isLogined = await UserController.instance.kakaoLogin();
 
-                        print('kakaoLogin : ${isKakaoLogined}');
+                        checkUserLogin();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -287,7 +294,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Text(
                             '카카오계정으로 로그인',
-                            style: TextStyle(color: Colors.black87, fontSize: 15.0),
+                            style: TextStyle(
+                                color: Colors.black87, fontSize: 15.0),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -302,8 +310,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(4.0),
-                        )),
+                      Radius.circular(4.0),
+                    )),
                   ),
                 ),
                 Container(
@@ -326,7 +334,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Text(
                             '네이버계정으로 로그인',
-                            style: TextStyle(color: Colors.white, fontSize: 15.0),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15.0),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -343,29 +352,33 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.all(Radius.circular(4.0))),
                   ),
                 ),
-                SizedBox(height: 5,),
+                SizedBox(
+                  height: 5,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      child:
-                        TextButton(
-                          onPressed: (){
-                            Get.to(SignupPage());
-                          },
-                          child: Text("회원가입", style: TextStyle(color: Colors.black87,)),
-                        )
+                        child: TextButton(
+                      onPressed: () {
+                        Get.to(SignupPage());
+                      },
+                      child: Text("회원가입",
+                          style: TextStyle(
+                            color: Colors.black87,
+                          )),
+                    )),
+                    SizedBox(
+                      width: 80,
                     ),
-                    SizedBox(width: 80,),
                     Container(
-                      child:
-                      TextButton(
-                        onPressed: (){
-                          UserController.instance.kakaoLogout();
-                        },
-                        child: Text("아이디/비밀번호 찾기", style: TextStyle(color: Colors.black87)),
-                      )
-                    ),
+                        child: TextButton(
+                      onPressed: () {
+                        UserController.instance.kakaoLogout();
+                      },
+                      child: Text("아이디/비밀번호 찾기",
+                          style: TextStyle(color: Colors.black87)),
+                    )),
                   ],
                 )
               ],
