@@ -6,7 +6,7 @@ class UserInformation {
   bool newsNotification;
   String? pushToken;
   String role;
-  String? idToken;
+  String? googleId;
   String? password;
   String? kakaoId;
   String? naverId;
@@ -21,7 +21,7 @@ class UserInformation {
     this.newsNotification,
     this.pushToken,
     this.role,
-    this.idToken,
+    this.googleId,
     this.password,
     this.kakaoId,
     this.naverId,
@@ -38,14 +38,14 @@ class UserInformation {
         json['phoneNo'].toString(),
         json['profileImage'].toString(),
         bool.parse(json['newsNotification'].toString()),
-        json['pushToken'].toString(),
+        json['pushToken']?.toString(),
         json['role'].toString(),
-        json['idToken'].toString(),
+        json['googleId']?.toString(),
         json['password'].toString(),
-        json['kakaoId'].toString(),
-        json['naverId'].toString(),
-        json['appleId'].toString(),
-        json['refreshToken'].toString());
+        json['kakaoId']?.toString(),
+        json['naverId']?.toString(),
+        json['appleId']?.toString(),
+        json['refreshToken']?.toString());
   }
 
   Map<String, dynamic> toJson() => {
@@ -56,11 +56,11 @@ class UserInformation {
         'newsNotification': newsNotification.toString(),
         'pushToken': pushToken.toString(),
         'role': role.toString(),
-        'idToken': idToken.toString(),
+        'googleId': googleId.toString(),
         'password': password.toString(),
         'kakaoId': kakaoId.toString(),
-        'naverId': kakaoId.toString(),
-        'appleId': kakaoId.toString(),
+        'naverId': naverId.toString(),
+        'appleId': appleId.toString(),
         'refreshToken': kakaoId.toString(),
       };
 }

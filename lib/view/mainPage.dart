@@ -2,6 +2,7 @@ import 'package:daum_postcode_search/daum_postcode_search.dart';
 import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/controller/user_controller.dart';
 import 'package:dongne/model/address.dart';
+import 'package:dongne/view/createRoomPage.dart';
 import 'package:dongne/view/roomTile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   bool isAreaId = false;
   TextEditingController _AddressController = TextEditingController();
-  String ourArea = '아직 없어요..';
+  String ourArea = '아직 없어요';
 
   @override
   void initState() {
@@ -31,11 +32,17 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!isAreaId) {
         showPopup();
+      }else{
+        setState(() {
+          ourArea = UserController.instance.userAreaId!;
+        });
       }
     });
   }
 
   void fetchData() async {
+    isAreaId =  await UserController.instance.getUserAreaId();
+
     //await RoomController.instance.getRoomList();
   }
 
@@ -49,7 +56,7 @@ class _MainPageState extends State<MainPage> {
               style: TextStyle(color: Colors.black87, fontSize: 25.0)),
           content: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orangeAccent
+              backgroundColor: Colors.deepOrangeAccent
             ),
             child: Text('주소 찾기',style: TextStyle(color: Colors.white, fontSize: 25.0)),
             onPressed: () async {
@@ -148,6 +155,22 @@ class _MainPageState extends State<MainPage> {
                       );
                     },
                   )),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0,5,20,10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      Get.to(CreateRoomPage());
+                    },
+                    icon: Icon(Icons.add_circle),
+                    label: Text("방만들기",style: TextStyle(fontWeight: FontWeight.bold)),
+                    backgroundColor: Colors.deepOrangeAccent,
+                  ),
+                ],
+              ),
             )
           ],
         ),
