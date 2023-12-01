@@ -43,8 +43,8 @@ class Room {
   Map<String, dynamic> toJson() => {
     'title': title.toString(),
     'category': category.toString(),
-    'max': max.toString(),
-    'AreaId': AreaId.toString(),
+    'max': max,
+    'AreaId': AreaId,
     'orderLink': orderLink.toString(),
     'restaurantName': restaurantName.toString(),
     'dueDate': dueDate.toString(),

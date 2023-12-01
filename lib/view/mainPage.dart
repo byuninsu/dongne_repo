@@ -22,26 +22,29 @@ class _MainPageState extends State<MainPage> {
   bool isAreaId = false;
   TextEditingController _AddressController = TextEditingController();
   String ourArea = '아직 없어요';
+  final String userAddressKey = 'userAddress';
 
   @override
   void initState() {
     super.initState();
-    fetchData();
-
-    //init이 완료된 후 실행되는 콜백에서 진행
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!isAreaId) {
-        showPopup();
-      }else{
-        setState(() {
-          ourArea = UserController.instance.userAreaId!;
-        });
-      }
-    });
+    initLogic();
   }
 
-  void fetchData() async {
-    isAreaId =  await UserController.instance.getUserAreaId();
+  void initLogic() async {
+    await fetchData();
+
+    if (!isAreaId) {
+      showPopup();
+    } else {
+      setState(() {
+        ourArea = UserController.instance.currentUserAddress!;
+      });
+    }
+  }
+
+  Future<void> fetchData() async {
+    isAreaId = await UserController.instance.getUserAreaId();
+    ourArea = UserController.instance.currentUserAddress!;
 
     //await RoomController.instance.getRoomList();
   }
@@ -53,12 +56,14 @@ class _MainPageState extends State<MainPage> {
         return AlertDialog(
           backgroundColor: Colors.white,
           title: Text('나의 동네는 ?',
-              style: TextStyle(color: Colors.black87, fontSize: 25.0)),
+              style:
+                  GoogleFonts.bebasNeue(fontSize: 15.0, color: Colors.black)),
           content: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrangeAccent
-            ),
-            child: Text('주소 찾기',style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                backgroundColor: Colors.deepOrangeAccent),
+            child: Text('주소 찾기',
+                style:
+                    GoogleFonts.bebasNeue(fontSize: 15.0, color: Colors.white)),
             onPressed: () async {
               KopoModel model = await Navigator.push(
                 context,
@@ -71,16 +76,14 @@ class _MainPageState extends State<MainPage> {
                   model.buildingName.toString(),
                   model.address.toString(),
                   model.sido.toString(),
-                  model.sigungu.toString()
-              );
+                  model.sigungu.toString());
 
-              UserController.instance.setUserAddress(userAddress);
+              UserController.instance.checkUserAddress(userAddress);
 
-              
               _AddressController.text =
-              '${model.zonecode!} ${model.address!} ${model.buildingName!}';
+                  '${model.zonecode!} ${model.address!} ${model.buildingName!}';
 
-              if(_AddressController.text != null){
+              if (_AddressController.text != null) {
                 setState(() {
                   ourArea = _AddressController.text;
                   Navigator.pop(context);
@@ -157,7 +160,7 @@ class _MainPageState extends State<MainPage> {
                   )),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0,5,20,10),
+              padding: const EdgeInsets.fromLTRB(0, 5, 20, 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -166,7 +169,11 @@ class _MainPageState extends State<MainPage> {
                       Get.to(CreateRoomPage());
                     },
                     icon: Icon(Icons.add_circle),
-                    label: Text("방만들기",style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: Text("방만들기",
+                        style: GoogleFonts.bebasNeue(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 15)),
                     backgroundColor: Colors.deepOrangeAccent,
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dongne/controller/user_controller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../api/api.dart';
@@ -26,62 +27,44 @@ class RoomController extends GetxController {
   }
 
 
-  // Future<void> voteOption(String roomNumber, String optionNumber) async {
-  //   print("RoomController voteOption ++ ");
-  //
-  //   try{
-  //     var res = await http.post(Uri.parse(API.voteOption), body: {
-  //       "room_number" :  roomNumber,
-  //       "option_number" : optionNumber
-  //     });
-  //
-  //     if(res.statusCode == 200){
-  //       var resVote = jsonDecode(res.body);
-  //       if(resVote['success'] == true ){
-  //         print("투표 성공");
-  //       }else{
-  //         print("투표 실패 not success");
-  //       }
-  //     }else{
-  //       print("vote not success res.statusCode : ${res.statusCode}");
-  //     }
-  //   }catch (e){
-  //     print("try exception !!${e.toString()} ");
-  //   }
-  //   updateRoomInfo(roomInfo!.room_number.toString());
-  //
-  // }
+  Future<bool> createRomm(Room room) async {
+    print("createRomm : ${room}");
+    
+    
+    try{
+      var res = await http.post(Uri.parse(API.createRoom),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${UserController.instance.userAccessToken.value}'
+          },
+          body: jsonEncode(room.toJson())
+      );
 
-  // Future<void> updateRoomInfo(String roomNumber) async {
-  //   print("updateRoomInfo ++  roomNumber : ${roomNumber}");
-  //
-  //
-  //   try {
-  //     //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
-  //     var res = await http.post(Uri.parse(API.choiceRoom), body: {
-  //       "room_number": roomNumber,
-  //     });
-  //
-  //     //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
-  //     if (res.statusCode == 200) {
-  //       var resLogin = jsonDecode(res.body);
-  //       if (resLogin['success'] == true) {
-  //         print("choiceRoom success");
-  //
-  //         roomInfo = Room.fromJson(resLogin['roomData']);
-  //         setOption();
-  //
-  //       } else {
-  //         print("receiveDbUser not success");
-  //       }
-  //     } else {
-  //       print("res.statusCode not 200, statusCode = ${res.statusCode} ");
-  //     }
-  //   } catch (e) {
-  //     print("try exception !!${e.toString()} ");
-  //   }
-  //
-  // }
+      int firstDigit = res.statusCode ~/ 100;
+
+      if (firstDigit == 2) {
+        print("방 생성 완료");
+
+        return true;
+      } else {
+        print("방 생성 실패");
+        print("res.body : ${res.body}" );
+        return false;
+      }
+
+
+    }catch (e){
+      print("try exception!! e : ${e}");
+    }
+
+
+
+
+
+
+    return false;
+  }
+
 
 
 

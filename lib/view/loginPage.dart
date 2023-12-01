@@ -39,15 +39,8 @@ class _LoginPageState extends State<LoginPage> {
         hasContent2 = passwordController.text.isNotEmpty;
       });
     });
-
-    //checkUserLogin();
   }
 
-  void checkUserLogin() async {
-    if (isLogined == true) {
-      Get.to(MainPage());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 5),
                 Text("모일수록 이득보는 우리동네",
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    style: GoogleFonts.bebasNeue(fontSize: 15.0,fontWeight: FontWeight.bold)),
                 SizedBox(
                   height: 20,
                 ),
@@ -117,9 +109,9 @@ class _LoginPageState extends State<LoginPage> {
                           width: phoneWidthSize / 1.1,
                           height: phoneHeightSize / 39.9,
                           alignment: Alignment.topLeft,
-                          child: const Text(
+                          child:  Text(
                             "이메일",
-                            style: TextStyle(fontSize: 15),
+                            style: GoogleFonts.bebasNeue(fontSize: 15.0),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -154,9 +146,9 @@ class _LoginPageState extends State<LoginPage> {
                           width: phoneWidthSize / 1.1,
                           height: phoneHeightSize / 39.9,
                           alignment: Alignment.topLeft,
-                          child: const Text(
+                          child:  Text(
                             "비밀번호",
-                            style: TextStyle(fontSize: 15),
+                            style: GoogleFonts.bebasNeue(fontSize: 15.0),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -209,10 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Center(
                           child: Text(
                             '로그인',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: GoogleFonts.bebasNeue(fontSize: 15.0,fontWeight: FontWeight.bold,color: Colors.white),
                           ),
                         ),
                       ),
@@ -225,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   child: Text(
                     "OR",
-                    style: TextStyle(fontSize: 15.0),
+                    style: GoogleFonts.bebasNeue(fontSize: 15.0),
                   ),
                 ),
                 SizedBox(
@@ -239,10 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white),
                       onPressed: () async {
-                        isLogined =
-                            await UserController.instance.signInWithGoogle();
-
-                        checkUserLogin();
+                        isLogined = await UserController.instance.isCheckUserAccessToken();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -254,8 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Text(
                             '구글계정으로 로그인',
-                            style: TextStyle(
-                                color: Colors.black87, fontSize: 15.0),
+                             style : GoogleFonts.bebasNeue(fontSize: 15.0,fontWeight: FontWeight.bold),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -282,7 +267,6 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () async {
                         isLogined = await UserController.instance.kakaoLogin();
 
-                        checkUserLogin();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -294,8 +278,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Text(
                             '카카오계정으로 로그인',
-                            style: TextStyle(
-                                color: Colors.black87, fontSize: 15.0),
+                            style: GoogleFonts.bebasNeue(fontSize: 15.0,color: Colors.black),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -335,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                           Text(
                             '네이버계정으로 로그인',
                             style:
-                                TextStyle(color: Colors.white, fontSize: 15.0),
+                            GoogleFonts.bebasNeue(fontSize: 15.0,color: Colors.white),
                           ),
                           Opacity(
                             opacity: 0.0,
@@ -364,9 +347,7 @@ class _LoginPageState extends State<LoginPage> {
                         Get.to(SignupPage());
                       },
                       child: Text("회원가입",
-                          style: TextStyle(
-                            color: Colors.black87,
-                          )),
+                          style: GoogleFonts.bebasNeue(fontSize: 15.0,color: Colors.black)),
                     )),
                     SizedBox(
                       width: 80,
@@ -377,7 +358,7 @@ class _LoginPageState extends State<LoginPage> {
                         UserController.instance.kakaoLogout();
                       },
                       child: Text("아이디/비밀번호 찾기",
-                          style: TextStyle(color: Colors.black87)),
+                          style: GoogleFonts.bebasNeue(fontSize: 15.0, color: Colors.black)),
                     )),
                   ],
                 )

@@ -19,7 +19,14 @@ class UserController extends GetxController {
   static const storage = FlutterSecureStorage();
   final String loginKey = 'accessToken';
   late Rx<String?> userAccessToken = Rx<String?>(null);
-  String? userAreaId;
+  int? userAreaId;
+
+  String? currentUserAddress;
+
+  String? userLatitude;
+
+  String? userLongitude;
+
   late Rx<User?> currentUser = Rx<User?>(null);
   kakao.User? kakaoUser;
   bool isKakaoUserLogin = false;
@@ -31,6 +38,16 @@ class UserController extends GetxController {
         Get.to(MainPage());
       }
     });
+  }
+
+  Future<bool> isCheckUserAccessToken() async {
+    userAccessToken.value = await storage.read(key: loginKey);
+    if (userAccessToken.value != null) {
+      print("current userAccessToken : ${userAccessToken.value}");
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<void> signupUser(UserInformation userInformation) async {
@@ -91,7 +108,6 @@ class UserController extends GetxController {
         userAccessToken.value = await storage.read(key: 'accessToken');
 
         return true;
-
       } else {
         print("sign not success res.statusCode : ${res.statusCode}");
         print("res : ${res.body}");
@@ -124,7 +140,6 @@ class UserController extends GetxController {
       try {
         await storage.write(key: 'accessToken', value: value.user!.uid);
         UserInformation googleUserData = UserInformation(
-
             value.user!.email.toString(),
             value.user!.displayName.toString(),
             '010-3273-3273',
@@ -139,15 +154,13 @@ class UserController extends GetxController {
             null,
             null);
 
-        // if(storage.read(key: 'accessToken') == null ){
-        //   signupUser(googleUserData);
-        // }else{
-        //   loginUser(googleUserData);
-        // }
-        loginUser(googleUserData);
+        if (await storage.read(key: 'accessToken') == null) {
+          signupUser(googleUserData);
+        } else {
+          loginUser(googleUserData);
+        }
 
         return true;
-
       } catch (e) {
         print("Error writing to storage: $e");
         return false;
@@ -242,11 +255,11 @@ class UserController extends GetxController {
     await FlutterNaverLogin.logOut();
   }
 
-  Future<bool> setUserAddress(Address userAddress) async {
+  Future<bool> checkUserAddress(Address userAddress) async {
     print("userAccessToken.toString() : ${userAccessToken.toString()}");
 
     try {
-      var res = await http.put(Uri.parse(API.setUserAddress),
+      var res = await http.put(Uri.parse(API.checkUserAddress),
           headers: <String, String>{
             'Authorization': 'Bearer ${userAccessToken.toString()}'
           },
@@ -256,18 +269,18 @@ class UserController extends GetxController {
 
       if (firstDigit == 2) {
         Map<String, dynamic> resultMessage = json.decode(res.body);
-        print("유저 주소 등록 완료");
+        print("유저 주소 검색 완료");
         print("res : ${resultMessage}");
 
         //받아온 userAreaId 를 storage에 저장
-        storage.write(key: 'userAreaId', value: resultMessage['id'].toString());
-        storage.read(key: 'userAreaId').then((value) => {
-              //userAreaId 확인
-              print('user userAreaId : ${value} '),
 
-              //userAreaId로 UserArea 셋팅
-              setUserArea(value!)
-            });
+        currentUserAddress = resultMessage['address'];
+        userAreaId = resultMessage['areaId'];
+        userLatitude = resultMessage['latitude'];
+        userLongitude = resultMessage['longitude'];
+
+        setUserArea(currentUserAddress!);
+
         return true;
       } else {
         print("유저 주소 등록 실패");
@@ -282,29 +295,27 @@ class UserController extends GetxController {
   }
 
   Future<bool> setUserArea(String userAreaId) async {
-    print("setUserArea : $userAreaId");
+    Map<String, int> userAreaMap = {"areaId": int.parse(userAreaId)};
 
-    var userAreaMap = {"areaId": userAreaId};
+    print("setUserArea : ${jsonEncode(userAreaMap)}");
+    print("userAccessToken.value : ${userAccessToken.value}");
 
     try {
-      var res = await http.put(Uri.parse(API.setUserAddress),
+      var res = await http.put(Uri.parse(API.setUserAreaId),
           headers: <String, String>{
-            'Authorization': 'Bearer ${userAccessToken.toString()}'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userAccessToken.value}'
           },
-          body: userAreaMap);
+          body: jsonEncode(userAreaMap));
 
       int firstDigit = res.statusCode ~/ 100;
 
       if (firstDigit == 2) {
-        Map<String, dynamic> resultMessage = json.decode(res.body);
-
         print("유저 지역 등록 완료");
-        print("res : ${resultMessage}");
 
         return true;
       } else {
         print("유저 지역 등록 실패");
-        print("res : ${res.body}");
         return false;
       }
     } catch (e) {
@@ -330,7 +341,11 @@ class UserController extends GetxController {
 
         print("지역 받아오기 성공");
         print("res : ${resultMessage}");
-        userAreaId = resultMessage['areaId'];
+        userAreaId = resultMessage['id'];
+        currentUserAddress = resultMessage['address'];
+        userLatitude = resultMessage['latitude'];
+        userLongitude = resultMessage['longitude'];
+
         return true;
       } else {
         print("지역 받아오기 실패");

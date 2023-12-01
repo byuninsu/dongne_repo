@@ -61,7 +61,7 @@ class _RoomTileState extends State<RoomTile> {
                     child: SizedBox(
                         width: 40,
                         height: 40,
-                        child: Image.asset("images/chiken.png")),
+                        child: Image.asset("images/chicken.png")),
                   ),
                 ),
                 Column(
