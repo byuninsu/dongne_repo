@@ -3,25 +3,29 @@ import 'dart:typed_data';
 
 class Room {
   String title;
+  String orderLink;
+  String longitude;
+  String latitude;
+  String restaurantName;
   String category;
   int max;
-  int AreaId;
-  String orderLink;
-  String restaurantName;
+  int deliveryFee;
   String dueDate;
-  String latitude;
-  String longitude;
+  int StatusId;
+  int AreaId;
 
   Room(
       this.title,
+      this.orderLink,
+      this.longitude,
+      this.latitude,
+      this.restaurantName,
       this.category,
       this.max,
-      this.AreaId,
-      this.orderLink,
-      this.restaurantName,
+      this.deliveryFee,
       this.dueDate,
-      this.latitude,
-      this.longitude,
+      this.StatusId,
+      this.AreaId,
       );
 
 
@@ -29,28 +33,31 @@ class Room {
 
     return Room(
       json['title'].toString(),
+      json['orderLink'].toString(),
+      json['longitude'].toString(),
+      json['latitude'].toString(),
+      json['restaurantName'].toString(),
       json['category'].toString(),
       int.parse(json['max'].toString()),
-      int.parse(json['AreaId'].toString()),
-      json['orderLink'].toString(),
-      json['restaurantName'].toString(),
+      int.parse(json['deliveryFee'].toString()),
       json['dueDate'].toString(),
-      json['latitude'].toString(),
-      json['longitude'].toString(),
+      int.parse(json['StatusId'].toString()),
+      int.parse(json['AreaId'].toString()),
     );
   }
 
   Map<String, dynamic> toJson() => {
     'title': title.toString(),
+    'orderLink': orderLink.toString(),
+    'longitude': longitude.toString(),
+    'latitude': latitude.toString(),
+    'restaurantName': restaurantName.toString(),
     'category': category.toString(),
     'max': max,
-    'AreaId': AreaId,
-    'orderLink': orderLink.toString(),
-    'restaurantName': restaurantName.toString(),
+    'deliveryFee': deliveryFee,
     'dueDate': dueDate.toString(),
-    'latitude': latitude.toString(),
-    'longitude': longitude.toString(),
-
+    'StatusId': StatusId,
+    'AreaId': AreaId,
   };
 
 }

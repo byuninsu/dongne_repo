@@ -275,11 +275,11 @@ class UserController extends GetxController {
         //받아온 userAreaId 를 storage에 저장
 
         currentUserAddress = resultMessage['address'];
-        userAreaId = resultMessage['areaId'];
+        userAreaId = resultMessage['id'];
         userLatitude = resultMessage['latitude'];
         userLongitude = resultMessage['longitude'];
 
-        setUserArea(currentUserAddress!);
+        setUserArea(userAreaId!);
 
         return true;
       } else {
@@ -294,8 +294,8 @@ class UserController extends GetxController {
     return false;
   }
 
-  Future<bool> setUserArea(String userAreaId) async {
-    Map<String, int> userAreaMap = {"areaId": int.parse(userAreaId)};
+  Future<bool> setUserArea(int userAreaId) async {
+    Map<String, int> userAreaMap = {"areaId": userAreaId};
 
     print("setUserArea : ${jsonEncode(userAreaMap)}");
     print("userAccessToken.value : ${userAccessToken.value}");

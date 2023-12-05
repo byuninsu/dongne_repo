@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dongne/controller/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../model/room.dart';
 
@@ -28,6 +29,14 @@ class _RoomTileState extends State<RoomTile> {
 
   Future<void> fetchData() async {
 
+  }
+
+  String fomatTime(String defaultValue){
+    DateTime dateTime = DateTime.parse(defaultValue);
+
+    String formattedTime = DateFormat('HH:mm').format(dateTime);
+
+    return formattedTime;
   }
 
   @override
@@ -64,35 +73,36 @@ class _RoomTileState extends State<RoomTile> {
                         child: Image.asset("images/chicken.png")),
                   ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      width: 120,
-                      child: Text(
-                        "${widget.room.title}",
-                        style: GoogleFonts.notoSans(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.bold
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10,8,5,3),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 120,
+                        child: Text(
+                          "${widget.room.title}",
+                          style: GoogleFonts.notoSans(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.bold
+                            )
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 120,
+                        child: Text(
+                          "${fomatTime(widget.room.dueDate)}",
+                          style: GoogleFonts.notoSans(
+                            textStyle: TextStyle(color: Colors.grey, fontSize: 15)
                           )
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 120,
-                      child: Text(
-                        "${widget.room.dueDate}",
-                        style: GoogleFonts.notoSans(
-                          textStyle: TextStyle(color: Colors.grey, fontSize: 12)
-                        )
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
+
             Row(
               children: [
                 Container(

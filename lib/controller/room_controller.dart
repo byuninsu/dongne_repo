@@ -15,30 +15,27 @@ class RoomController extends GetxController {
 
   Room? roomInfo;
 
-
-
   Future<Room?> getRoomInfo() async {
     print("getRoomInfo() ++");
     return roomInfo;
   }
 
-  void clearRoomInfo(){
+  void clearRoomInfo() {
     roomInfo = null;
   }
 
-
   Future<bool> createRomm(Room room) async {
-    print("createRomm : ${room}");
-    
-    
-    try{
+    print("createRomm : ${room.toJson()}");
+
+
+    try {
       var res = await http.post(Uri.parse(API.createRoom),
           headers: <String, String>{
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${UserController.instance.userAccessToken.value}'
+            'Authorization':
+                'Bearer ${UserController.instance.userAccessToken.value}'
           },
-          body: jsonEncode(room.toJson())
-      );
+          body: jsonEncode(room.toJson()));
 
       int firstDigit = res.statusCode ~/ 100;
 
@@ -48,25 +45,15 @@ class RoomController extends GetxController {
         return true;
       } else {
         print("방 생성 실패");
-        print("res.body : ${res.body}" );
+        print("res.body : ${res.body}");
         return false;
       }
-
-
-    }catch (e){
+    } catch (e) {
       print("try exception!! e : ${e}");
     }
 
-
-
-
-
-
     return false;
   }
-
-
-
 
   // Future<int> choiceRoom(String receiveRoomNumber) async {
   //   print("choiceRoom++ receiveRoomNumber : ${receiveRoomNumber}");
@@ -114,33 +101,43 @@ class RoomController extends GetxController {
   Future<void> getRoomList() async {
     try {
       //body 내용을 API.login에 전달하여 받은 return값을 res에 저장
-      var res = await http.post(
+      var res = await http.get(
         Uri.parse(API.searchRoomList),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${UserController.instance.userAccessToken}'
+        },
       );
 
       //반환받은 res값이 200(정상) 이면 해당 리턴값(json)을 확인하여 성공일때와 아닐때를 구분하여 코드진행
       if (res.statusCode == 200) {
-        var resBody = jsonDecode(res.body);
-        if (resBody['success'] == true) {
-          print("roomList receive success !");
+        //var resBody = jsonDecode(res.body);
+        print('방 리스트 수신 성공 !');
 
-          List<dynamic> stringRoomlist = resBody['roomList'];
+        roomList.clear();
 
-          roomList.clear();
+        List<Map<String, dynamic>> dataList = List<Map<String, dynamic>>.from(json.decode(res.body));
 
-          for (int i = 0; i < stringRoomlist.length; i++) {
-            Map<String, dynamic> mapRoom = stringRoomlist[i];
-            Room room = Room.fromJson(mapRoom);
-            roomList.add(room);
-          }
-        } else {
-          // print("roomList 수신 실패");
+
+        // 데이터 출력
+        for (Map<String, dynamic> data in dataList) {
+          Room room = Room.fromJson(data);
+          roomList.add(room);
         }
+
+        // List<dynamic> stringRoomlist = resBody['roomList'];
+        //
+        // roomList.clear();
+        //
+        // for (int i = 0; i < stringRoomlist.length; i++) {
+        //   Map<String, dynamic> mapRoom = stringRoomlist[i];
+        //   Room room = Room.fromJson(mapRoom);
+        //   roomList.add(room);
+        // }
       } else {
-        // print("데이터베이스 통신 실패, statusCode = ${res.statusCode} ");
+         print("방 리스트 수신 실패 res.statusCode : ${res.statusCode}, res.body :  ${res.body}" );
       }
     } catch (e) {
-      // print("try exception !!${e.toString()}");
+      print("방 리스트 수신 실패  try exception !!${e.toString()}");
     }
   }
 }

@@ -24,29 +24,29 @@ class _MainPageState extends State<MainPage> {
   String ourArea = '아직 없어요';
   final String userAddressKey = 'userAddress';
 
-  @override
-  void initState() {
-    super.initState();
-    initLogic();
-  }
-
-  void initLogic() async {
-    await fetchData();
-
-    if (!isAreaId) {
-      showPopup();
-    } else {
-      setState(() {
-        ourArea = UserController.instance.currentUserAddress!;
-      });
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   initLogic();
+  // }
+  //
+  //
+  // void initLogic() {
+  //
+  // }
 
   Future<void> fetchData() async {
     isAreaId = await UserController.instance.getUserAreaId();
-    ourArea = UserController.instance.currentUserAddress!;
 
-    //await RoomController.instance.getRoomList();
+    if(UserController.instance.currentUserAddress != null){
+      ourArea = UserController.instance.currentUserAddress!;
+      await RoomController.instance.getRoomList();
+    }
+
+    if (!isAreaId) {
+      showPopup();
+    }
+
   }
 
   void showPopup() {
@@ -115,72 +115,84 @@ class _MainPageState extends State<MainPage> {
           iconTheme: IconThemeData(color: Colors.black87),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  child: Icon(Icons.location_on_outlined),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Container(
-                  width: 300,
-                  child: Text(
-                    "우리 동네는?",
-                    style: GoogleFonts.notoSans(),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              width: 300,
-              child: Text(
-                ourArea,
-                style: GoogleFonts.notoSans(),
-              ),
-            ),
-            Expanded(
-              child: Obx(() => GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, childAspectRatio: 1.5),
-                    itemCount: RoomController.instance.roomList.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        child: RoomTile(
-                            room: RoomController.instance.roomList[index]),
-                      );
-                    },
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 5, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      body: FutureBuilder(
+        future: fetchData(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(child: CircularProgressIndicator());
+          }else if(snapshot.hasError){
+            return Text('ERROR : ${snapshot.error}');
+          }else{
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+              child: Column(
                 children: [
-                  FloatingActionButton.extended(
-                    onPressed: () {
-                      Get.to(CreateRoomPage());
-                    },
-                    icon: Icon(Icons.add_circle),
-                    label: Text("방만들기",
-                        style: GoogleFonts.bebasNeue(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 15)),
-                    backgroundColor: Colors.deepOrangeAccent,
+                  Row(
+                    children: [
+                      Container(
+                        child: Icon(Icons.location_on_outlined),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      // Container(
+                      //   width: 80,
+                      //   child: Text(
+                      //     "우리 동네는?",
+                      //     style: GoogleFonts.notoSans(),
+                      //   ),
+                      // ),
+                      SizedBox(width: 5,),
+                      Container(
+                        width: 150,
+                        child: Text(
+                          ourArea,
+                          style: GoogleFonts.notoSans(),
+                        ),
+                      ),
+                    ],
                   ),
+
+
+                  SizedBox(height: 10,),
+                  Expanded(
+                    child: Obx(() => GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, childAspectRatio: 1.5),
+                      itemCount: RoomController.instance.roomList.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          child: RoomTile(
+                              room: RoomController.instance.roomList[index]),
+                        );
+                      },
+                    )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        FloatingActionButton.extended(
+                          onPressed: () {
+                            Get.to(CreateRoomPage());
+                          },
+                          icon: Icon(Icons.add_circle),
+                          label: Text("방만들기",
+                              style: GoogleFonts.bebasNeue(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 15)),
+                          backgroundColor: Colors.deepOrangeAccent,
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }
