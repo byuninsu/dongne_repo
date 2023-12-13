@@ -53,7 +53,7 @@ class UserInformation {
         'nickname': nickname.toString(),
         'phoneNo': phoneNo.toString(),
         'profileImage': profileImage.toString(),
-        'newsNotification': newsNotification.toString(),
+        'newsNotification': newsNotification,
         'pushToken': pushToken.toString(),
         'role': role.toString(),
         'googleId': googleId.toString(),

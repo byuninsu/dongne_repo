@@ -58,6 +58,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   intl: ^0.18.1
   html: ^0.15.4
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:

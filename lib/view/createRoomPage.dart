@@ -52,7 +52,11 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     {'value': '4', 'text': '4명'},
   ];
 
+
+
   Future<void> createRoomReq() async {
+    bool isCreateSuccess = false;
+
     //주소 변환
     await bringStoreAddress();
 
@@ -73,6 +77,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'").format(combinedDateTime);
 
     Room reqRoom = Room(
+      0,
         roomNameController.text.trim(),
         orderLinkController.text.trim(),
       storeLongitude,
@@ -87,6 +92,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     );
 
     await RoomController.instance.createRomm(reqRoom);
+
+
   }
 
   Future<void> bringStoreAddress() async {
@@ -111,7 +118,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     }catch (e){
       print('가게 주소가져오기 실패! ${e}');
     }
-
   }
 
   // Future<void> bringOrderInformation() async {
@@ -150,6 +156,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   @override
   void initState() {
     userAddress = UserController.instance.currentUserAddress!;
+    restaurantController.text = "네네치킨 문래점";
   }
 
   @override
@@ -423,7 +430,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   height: 35,
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "맛집 주소",
+                    "맛집 이름",
                     style: GoogleFonts.bebasNeue(fontSize: 12.0),
                     textAlign: TextAlign.left,
                   ),

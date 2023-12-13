@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 class Room {
+  int id;
   String title;
   String orderLink;
   String longitude;
@@ -15,6 +16,7 @@ class Room {
   int AreaId;
 
   Room(
+      this.id,
       this.title,
       this.orderLink,
       this.longitude,
@@ -28,10 +30,31 @@ class Room {
       this.AreaId,
       );
 
+  // 기본값을 설정한 기본 Room 생성자
+  factory Room.defaultRoom() {
+    return Room(
+      0,
+      "Default Title",
+      "Default Order Link",
+      "Default Longitude",
+      "Default Latitude",
+      "Default Restaurant Name",
+      "Default Category",
+      0,
+      0,
+      "Default Due Date",
+      0,
+      0,
+    );
+  }
+
+
+
 
   factory Room.fromJson(Map<String, dynamic> json) {
 
     return Room(
+      json['id'],
       json['title'].toString(),
       json['orderLink'].toString(),
       json['longitude'].toString(),

@@ -1,3 +1,4 @@
+import 'package:dongne/controller/menuIndex_controller.dart';
 import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/controller/user_controller.dart';
 import 'package:dongne/view/loginPage.dart';
@@ -28,6 +29,7 @@ void main() async {
   //GetX
   Get.put(RoomController());
   Get.put(UserController());
+  Get.put(MenuIndexController());
 
 }
 

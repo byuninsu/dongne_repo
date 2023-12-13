@@ -3,6 +3,7 @@ import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/controller/user_controller.dart';
 import 'package:dongne/model/address.dart';
 import 'package:dongne/view/createRoomPage.dart';
+import 'package:dongne/view/menuPage.dart';
 import 'package:dongne/view/roomTile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,16 +25,6 @@ class _MainPageState extends State<MainPage> {
   String ourArea = '아직 없어요';
   final String userAddressKey = 'userAddress';
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   initLogic();
-  // }
-  //
-  //
-  // void initLogic() {
-  //
-  // }
 
   Future<void> fetchData() async {
     isAreaId = await UserController.instance.getUserAreaId();
@@ -135,16 +126,9 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                         width: 20,
                       ),
-                      // Container(
-                      //   width: 80,
-                      //   child: Text(
-                      //     "우리 동네는?",
-                      //     style: GoogleFonts.notoSans(),
-                      //   ),
-                      // ),
                       SizedBox(width: 5,),
                       Container(
-                        width: 150,
+                        width: 300,
                         child: Text(
                           ourArea,
                           style: GoogleFonts.notoSans(),
@@ -162,8 +146,13 @@ class _MainPageState extends State<MainPage> {
                       itemCount: RoomController.instance.roomList.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          child: RoomTile(
-                              room: RoomController.instance.roomList[index]),
+                          child: GestureDetector(
+                            onTap: (){
+
+                            },
+                            child: RoomTile(
+                                room: RoomController.instance.roomList[index]),
+                          ),
                         );
                       },
                     )),

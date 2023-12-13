@@ -1,5 +1,9 @@
+import 'package:dongne/controller/room_controller.dart';
+import 'package:dongne/controller/menuIndex_controller.dart';
+import 'package:dongne/view/chatRoomPage.dart';
 import 'package:dongne/view/mainPage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key}) : super(key: key);
@@ -10,9 +14,9 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
 
-  int _selectIndex = 0;
+  int _selectIndex =  MenuIndexController.instance.menuIndex.value;
 
-  List _widgetOptions = [MainPage()];
+  List _widgetOptions = [MainPage(),Container(),Container(),ChatRoomPage(choiceRoom: RoomController.instance.getRoomInfo(),),Container()];
 
   void _onBackKey() {
     if (_selectIndex == 0) {
@@ -49,7 +53,7 @@ class _MenuPageState extends State<MenuPage> {
           });
     } else {
       setState(() {
-        _selectIndex = 0;
+        MenuIndexController.instance.setMenuIndex(0);
       });
     }
   }
@@ -78,8 +82,17 @@ class _MenuPageState extends State<MenuPage> {
             BottomNavigationBarItem(icon: Icon(Icons.person),label: "")
           ],
           onTap: (index) {
+            if(index == 3){
+              if(RoomController.instance.roomInfo == null){
+                Fluttertoast.showToast(msg: "참여중인 채팅방이 없습니다");
+              }else{
+                setState(() {
+                  MenuIndexController.instance.setMenuIndex(3);
+                });
+              }
+            }
             setState(() {
-              _selectIndex = index;
+              MenuIndexController.instance.setMenuIndex(index);
             });
           },
         ),

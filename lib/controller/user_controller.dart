@@ -1,12 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'package:dio/dio.dart';
+import 'package:dongne/controller/room_controller.dart';
 import 'package:dongne/model/address.dart';
 import 'package:dongne/view/mainPage.dart';
+import 'package:dongne/view/menuPage.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -18,6 +20,7 @@ class UserController extends GetxController {
 
   static const storage = FlutterSecureStorage();
   final String loginKey = 'accessToken';
+  final String refreshKey = 'refreshToken';
   late Rx<String?> userAccessToken = Rx<String?>(null);
   int? userAreaId;
 
@@ -35,17 +38,24 @@ class UserController extends GetxController {
   void onInit() {
     ever(userAccessToken, (String? accessToken) {
       if (accessToken != null) {
-        Get.to(MainPage());
+        Get.to(MenuPage());
       }
     });
   }
 
   Future<bool> isCheckUserAccessToken() async {
+    storage.deleteAll();
+
     userAccessToken.value = await storage.read(key: loginKey);
     if (userAccessToken.value != null) {
       print("current userAccessToken : ${userAccessToken.value}");
+
+      //현재 참여중인 방정보 저장
+      RoomController.instance.recordRoom();
       return true;
+
     } else {
+      signInWithGoogle();
       return false;
     }
   }
@@ -83,22 +93,28 @@ class UserController extends GetxController {
   Future<bool> loginUser(UserInformation userInformation) async {
     print('loginUser data : ${userInformation.toJson()}');
 
+    Dio dio = Dio();
+
     Map<String, dynamic> data = userInformation.toJson();
 
     try {
-      var res = await http.post(Uri.parse(API.userLogin), body: data);
+      Response response = await dio.post(API.userLogin,
+          data: json.encode(data) ,
+          options: Options(headers: {'Content-Type': 'application/json'})
+      );
 
-      int firstDigit = res.statusCode ~/ 100;
+      int firstDigit = response.statusCode! ~/ 100;
 
-      if (firstDigit == 2) {
-        Map<String, dynamic> resultMessage = json.decode(res.body);
+      if(firstDigit == 2){
+
+        print("resultMessage  : ${response.data}");
 
         print("로그인성공");
-        print("res : ${resultMessage}");
+        print("res : ${response.data}");
 
-        storage.write(key: 'accessToken', value: resultMessage['accessToken']);
+        storage.write(key: loginKey, value: response.data['accessToken']);
         storage.write(
-            key: 'refreshToken', value: resultMessage['refreshToken']);
+            key: refreshKey, value: response.data['refreshToken']);
 
         print(
             'storage write user accessToken : ${await storage.read(key: 'accessToken')}');
@@ -108,15 +124,15 @@ class UserController extends GetxController {
         userAccessToken.value = await storage.read(key: 'accessToken');
 
         return true;
-      } else {
-        print("sign not success res.statusCode : ${res.statusCode}");
-        print("res : ${res.body}");
-        return false;
       }
+
     } catch (e) {
       print("try exception !!${e.toString()} ");
       return false;
     }
+
+
+    return false;
   }
 
   Future<bool> signInWithGoogle() async {
@@ -138,7 +154,6 @@ class UserController extends GetxController {
         .signInWithCredential(credential)
         .then((value) async {
       try {
-        await storage.write(key: 'accessToken', value: value.user!.uid);
         UserInformation googleUserData = UserInformation(
             value.user!.email.toString(),
             value.user!.displayName.toString(),
@@ -154,9 +169,10 @@ class UserController extends GetxController {
             null,
             null);
 
-        if (await storage.read(key: 'accessToken') == null) {
-          signupUser(googleUserData);
-        } else {
+        print("signInWithGoogle storage.read(key: loginKey) : "
+            "${await storage.read(key: loginKey)}");
+
+        if (await storage.read(key: loginKey) == null) {
           loginUser(googleUserData);
         }
 
